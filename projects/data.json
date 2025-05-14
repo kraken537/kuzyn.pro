@@ -1,0 +1,11 @@
+[
+  {
+    "id": "m8bsp4vjnq1v16n0429",
+    "title": "Current server structure",
+    "category": "Coding",
+    "description": "kuzyn <br> (Node)\n├── Containers (LXC)  <br>\n│   ├─ 500 - pi-hole  (ad blocking) <br>\n│   ├─ 601 - automatyzator (music bot) <br>\n│   ├─ 110 - homeassistant  (smart home) <br>\n├── Virtual Machines (VM)  <br>\n│   ├─ 301 - kuzyn.pro  (apache2) <br>\n│   ├─ 401 - cloud.kuzyn.pro (private cloud)  <br>\n├── Network and storage  <br>\n│   ├─ localnetwork (kuzyn)  <br>\n│   ├─ local (kuzyn)  <br>\n│   ├─ local-lvm (kuzyn)  <br>\n│   └─ usb-storage (kuzyn)  <br>",
+    "status": "active",
+    "imageUrl": "https://i.imgur.com/ZCovDE2.png",
+    "date": "23.04.2025, 20:10:42"
+  }
+]

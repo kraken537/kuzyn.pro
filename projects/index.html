@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project Nexus | kuzyn.pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="https://i.imgur.com/Zcv9qKn.png">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="/fontawesome/css/all.min.css">
+    <script src="/fontawesome/js/all.min.js"></script>
+
+    <!-- Główny plik CSS -->
+    <link rel="stylesheet" href="/style.css">
+    
+
+    <style>
+        :root {
+            --primary-color: #1e1e1e;
+            --accent-color: #00ff88;
+            --background-color: #121212;
+            --text-color: #e0e0e0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Cyber border animation */
+        .cyber-border {
+            position: fixed;
+            pointer-events: none;
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-color);
+            width: calc(100% - 20px);
+            height: calc(100% - 20px);
+            margin: 10px;
+            z-index: 1000;
+            animation: borderPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes borderPulse {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+
+        /* Hero section */
+        .project-hero {
+            height: 30vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 1rem;
+            position: relative;
+            margin-top: 70px;
+        }
+
+        .project-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--accent-color), #00ccff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textGlow 2s ease-in-out infinite;
+        }
+
+        .project-hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+        }
+
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 10px rgba(0, 255, 136, 0.3); }
+            50% { text-shadow: 0 0 20px rgba(0, 255, 136, 0.6), 0 0 30px rgba(0, 255, 136, 0.4); }
+            100% { text-shadow: 0 0 10px rgba(0, 255, 136, 0.3); }
+        }
+
+        /* Project Filter */
+        .filter-container {
+            max-width: 1200px;
+            margin: 0 auto 2rem;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .filter-btn {
+            background: var(--primary-color);
+            color: var(--text-color);
+            border: 1px solid #333;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            background: #333;
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: var(--accent-color);
+            color: #000;
+            border-color: var(--accent-color);
+        }
+
+        /* Projects Grid */
+        .projects-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .project-card {
+            background: var(--primary-color);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            border: 1px solid #333;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.2);
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--accent-color), #00ccff, var(--accent-color));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 15px;
+        }
+
+        .project-card:hover::before {
+            opacity: 1;
+        }
+
+        .project-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid #333;
+        }
+
+        .project-content {
+            padding: 1.5rem;
+        }
+
+        .project-category {
+            display: inline-block;
+            background: #333;
+            color: var(--accent-color);
+            padding: 0.2rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .project-title {
+            color: var(--accent-color);
+            margin-bottom: 0.8rem;
+            font-size: 1.5rem;
+        }
+
+        .project-desc {
+            margin-bottom: 1.5rem;
+            color: #bbb;
+        }
+
+        .project-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .project-status {
+            display: flex;
+            align-items: center;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status-active {
+            background: #00ff88;
+            box-shadow: 0 0 10px #00ff88;
+        }
+
+        .status-completed {
+            background: #00ccff;
+            box-shadow: 0 0 10px #00ccff;
+        }
+
+        .status-paused {
+            background: #ff9900;
+            box-shadow: 0 0 10px #ff9900;
+        }
+
+        /* Add Project Button */
+        .add-project-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--accent-color);
+            color: #000;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 0 15px var(--accent-color);
+            cursor: pointer;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .add-project-btn:hover {
+            transform: rotate(90deg);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: var(--primary-color);
+            max-width: 800px;
+            margin: 100px auto;
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--accent-color);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: var(--accent-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            background: #222;
+            border: 1px solid #333;
+            color: var(--text-color);
+            border-radius: 5px;
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .image-preview-container {
+            margin-top: 1rem;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            display: none;
+        }
+
+        .cyber-button {
+            background: var(--accent-color);
+            color: #000;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .cyber-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px var(--accent-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .project-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .projects-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .modal-content {
+                margin: 50px 20px;
+            }
+        }
+
+        .project-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+        
+        .edit-project-btn, .delete-project-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .edit-project-btn {
+            background-color: #00ccff;
+            color: #000;
+        }
+        
+        .delete-project-btn {
+            background-color: #ff4444;
+            color: #fff;
+        }
+        
+        .edit-project-btn:hover {
+            background-color: #00a0cc;
+            transform: translateY(-2px);
+        }
+        
+        .delete-project-btn:hover {
+            background-color: #cc0000;
+            transform: translateY(-2px);
+        }
+        .nav-img {
+            height: 18px; 
+            vertical-align: middle; 
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Cyber Border Animation -->
+    <div class="cyber-border"></div>
+    
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="/blog"><i class="fas fa-blog"></i> Blog</a></li>
+            <li><a href="/notes"><i class="fas fa-sticky-note"></i> Notes</a></li>
+            <li><a href="/coding"><i class="fas fa-code"></i> Coding</a></li>
+            <li><a href="https://cloud.kuzyn.pro" target="_blank"><i class="fas fa-network-wired"></i> Network Drive</a></li>
+            <li><a href="https://proxmox.kuzyn.pro" target="_blank"><img src="https://i.imgur.com/ZCovDE2.png" class="nav-img" alt="Proxmox"> Proxmox</a></li>
+            <li><a href="https://ha.kuzyn.pro" target="_blank"><img src="https://i.imgur.com/uYUasRE.png" class="nav-img" alt="Home Assistant"> Home Assistant</a></li>
+        </ul>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="project-hero">
+        <h1>Project Nexus</h1>
+        <p>Track, present and document your creative journey</p>
+    </section>
+    
+    <!-- Project Filters -->
+    <div class="filter-container">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="Tech">Technology</button>
+        <button class="filter-btn" data-filter="DIY">DIY</button>
+        <button class="filter-btn" data-filter="Coding">Coding</button>
+        <button class="filter-btn" data-filter="Gardening">Gardening</button>
+        <button class="filter-btn" data-filter="Renovation">Renovation</button>
+    </div>
+    
+    <!-- Projects Grid -->
+    <div class="projects-container">
+        <div class="projects-grid" id="projectsGrid">
+            <!-- Projekty będą ładowane dynamicznie z data.json -->
+        </div>
+    </div>
+    
+    <!-- Add Project Button -->
+    <div class="add-project-btn" id="addProjectBtn">+</div>
+    
+    <!-- Add Project Modal -->
+    <div class="modal" id="projectModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">×</span>
+            <h2 style="color: var(--accent-color); margin-bottom: 1.5rem;">Add new project</h2>
+            
+            <form id="addProjectForm">
+                <input type="hidden" id="projectId">
+                <div class="form-group">
+                    <label for="projectTitle">Project title</label>
+                    <input type="text" id="projectTitle" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="projectCategory">Category</label>
+                    <select id="projectCategory" required>
+                        <option value="">Select category</option>
+                        <option value="Tech">Technology</option>
+                        <option value="DIY">DIY</option>
+                        <option value="Coding">Coding</option>
+                        <option value="Gardening">Gardening</option>
+                        <option value="Renovation">Renovation</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="projectDesc">Description</label>
+                    <textarea id="projectDesc" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="projectStatus">Status</label>
+                    <select id="projectStatus" required>
+                        <option value="active">Active</option>
+                        <option value="paused">Paused</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="projectImage">Project image (provide image URL)</label>
+                    <input type="text" id="projectImage" placeholder="Image URL or leave empty for default image">
+                </div>
+                
+                <button type="submit" class="cyber-button">Add project</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 kuzyn.pro | Private Website | Version 1.1</p>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-github"></i></a>
+            <a href="https://discord.gg/CV9GSg38"><i class="fab fa-discord"></i></a>
+            <a href="#"><i class="fas fa-envelope"></i></a>
+        </div>
+    </footer>
+    
+    <script>
+        // Dane projektów (będą ładowane z serwera)
+        let projects = [];
+        let filteredProjects = [];
+        
+        // Funkcja pobierająca projekty
+        async function fetchProjects() {
+            try {
+                const response = await fetch('/projects/data.json');
+                if (!response.ok) {
+                    throw new Error('Nie udało się pobrać danych projektów');
+                }
+                projects = await response.json();
+                filteredProjects = [...projects];
+                renderProjects();
+            } catch (error) {
+                console.error('Błąd podczas pobierania projektów:', error);
+                // Jeśli nie ma jeszcze pliku data.json, użyj przykładowych danych
+                projects = [
+                    {
+                        id: "example1",
+                        title: "Smart Terrarium",
+                        category: "Gardening",
+                        description: "Building an automated terrarium with humidity and temperature control for exotic plants.",
+                        status: "active",
+                        imageUrl: "/api/placeholder/400/200",
+                        date: new Date().toLocaleString('en-US')
+                    },
+                    {
+                        id: "example2",
+                        title: "Code Refactoring",
+                        category: "Coding",
+                        description: "Optimizing and restructuring backend code to improve performance and maintainability.",
+                        status: "active",
+                        imageUrl: "/api/placeholder/400/200",
+                        date: new Date().toLocaleString('en-US')
+                    },
+                    {
+                        id: "example3",
+                        title: "NextCloud Setup",
+                        category: "Tech",
+                        description: "Setting up personal cloud server using NextCloud for data storage and synchronization.",
+                        status: "paused",
+                        imageUrl: "/api/placeholder/400/200",
+                        date: new Date().toLocaleString('en-US')
+                    }
+                ];
+                filteredProjects = [...projects];
+                renderProjects();
+            }
+        }
+        
+        // Funkcja renderująca projekty
+        function renderProjects() {
+            const projectsGrid = document.getElementById('projectsGrid');
+            projectsGrid.innerHTML = '';
+            
+            filteredProjects.forEach(project => {
+                const statusClass = project.status === 'active' ? 'status-active' : 
+                                   project.status === 'completed' ? 'status-completed' : 'status-paused';
+                const statusText = project.status === 'active' ? 'Active' : 
+                                  project.status === 'completed' ? 'Completed' : 'Paused';
+                
+                const projectCard = document.createElement('div');
+                projectCard.className = 'project-card';
+                projectCard.dataset.id = project.id;
+                
+                // Zawartość karty projektu
+                let cardContent = `
+                    <div class="project-content">
+                        <span class="project-category">${project.category}</span>
+                        <h3 class="project-title">${project.title}</h3>
+                        <p class="project-desc">${project.description}</p>
+                        <div class="project-meta">
+                            <div class="project-status">
+                                <span class="status-indicator ${statusClass}"></span>
+                                ${statusText}
+                            </div>
+                            <span>Updated: ${project.date || 'Recently'}</span>
+                        </div>
+                        <div class="project-actions">
+                            <button class="edit-project-btn" data-id="${project.id}"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="delete-project-btn" data-id="${project.id}"><i class="fas fa-trash"></i> Delete</button>
+                        </div>
+                    </div>
+                `;
+                
+                // Dodaj obraz tylko jeśli użytkownik go faktycznie podał (nie placeholder)
+                if (project.imageUrl && !project.imageUrl.includes('/api/placeholder')) {
+                    cardContent = `<img src="${project.imageUrl}" alt="${project.title}" class="project-image">` + cardContent;
+                }
+                
+                projectCard.innerHTML = cardContent;
+                projectsGrid.appendChild(projectCard);
+            });
+            
+            // Dodaj nasłuchiwanie zdarzeń dla przycisków edycji i usuwania
+            addProjectButtonListeners();
+        }
+        
+        // Dodaje nasłuchiwanie zdarzeń dla przycisków edycji i usuwania
+        function addProjectButtonListeners() {
+            // Nasłuchiwanie dla przycisków edycji
+            document.querySelectorAll('.edit-project-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    const projectId = button.getAttribute('data-id');
+                    editProject(projectId);
+                });
+            });
+            
+            // Nasłuchiwanie dla przycisków usuwania
+            document.querySelectorAll('.delete-project-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    const projectId = button.getAttribute('data-id');
+                    if (confirm('Are you sure you want to delete this project?')) {
+                        deleteProject(projectId);
+                    }
+                });
+            });
+        }
+        
+        // Funkcja edycji projektu
+        function editProject(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            if (!project) return;
+            
+            // Wypełnij formularz danymi projektu
+            document.getElementById('projectId').value = projectId;
+            document.getElementById('projectTitle').value = project.title;
+            document.getElementById('projectCategory').value = project.category;
+            document.getElementById('projectDesc').value = project.description;
+            document.getElementById('projectStatus').value = project.status;
+            document.getElementById('projectImage').value = project.imageUrl && !project.imageUrl.includes('/api/placeholder') ? project.imageUrl : '';
+            
+            // Zmień tekst przycisku i nagłówka
+            document.querySelector('#projectModal h2').textContent = 'Edit project';
+            document.querySelector('#addProjectForm .cyber-button').textContent = 'Save changes';
+            
+            // Pokaż modal
+            projectModal.style.display = 'block';
+        }
+        
+        // Funkcja usuwania projektu
+async function deleteProject(projectId) {
+    try {
+        // Poprawiony endpoint z /projects/${projectId} na /api/projects/${projectId}
+        const response = await fetch(`/projects/${projectId}`, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to delete project');
+        }
+        
+        // Usuń projekt z lokalnej tablicy
+        projects = projects.filter(project => project.id !== projectId);
+        const activeFilter = document.querySelector('.filter-btn.active').getAttribute('data-filter');
+        filterProjects(activeFilter);
+        
+        alert('Project deleted successfully');
+    } catch (error) {
+        console.error('Error deleting project:', error);
+        alert('An error occurred while deleting the project. Please try again.');
+    }
+}
+        
+        
+        // Funkcja filtrująca projekty
+        function filterProjects(category) {
+            if (category === 'all') {
+                filteredProjects = [...projects];
+            } else {
+                filteredProjects = projects.filter(project => project.category === category);
+            }
+            renderProjects();
+        }
+        
+        // Obsługa przycisków filtrowania
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const category = btn.getAttribute('data-filter');
+                filterProjects(category);
+            });
+        });
+        
+        // Modal Functionality
+        const addProjectBtn = document.getElementById('addProjectBtn');
+        const projectModal = document.getElementById('projectModal');
+        const closeModal = document.getElementById('closeModal');
+        
+        addProjectBtn.addEventListener('click', () => {
+            // Resetuj formularz i zmień tekst przycisku na domyślny
+            document.getElementById('addProjectForm').reset();
+            document.getElementById('projectId').value = '';
+            document.querySelector('#projectModal h2').textContent = 'Add new project';
+            document.querySelector('#addProjectForm .cyber-button').textContent = 'Add project';
+            projectModal.style.display = 'block';
+        });
+        
+        closeModal.addEventListener('click', () => {
+            projectModal.style.display = 'none';
+        });
+        
+        window.addEventListener('click', (event) => {
+            if (event.target === projectModal) {
+                projectModal.style.display = 'none';
+            }
+        });
+        
+        // Obsługa formularza dodawania/edycji projektu
+        const addProjectForm = document.getElementById('addProjectForm');
+        
+        addProjectForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            // Pobierz wartości z formularza
+            const projectId = document.getElementById('projectId').value;
+            const title = document.getElementById('projectTitle').value;
+            const category = document.getElementById('projectCategory').value;
+            const description = document.getElementById('projectDesc').value;
+            const status = document.getElementById('projectStatus').value;
+            const imageUrl = document.getElementById('projectImage').value || null;
+            
+            // Stwórz obiekt projektu
+            const projectData = {
+                title,
+                category,
+                description,
+                status,
+                imageUrl
+            };
+            
+            // Dodaj ID jeśli edytujemy istniejący projekt
+            if (projectId) {
+                projectData.id = projectId;
+            }
+            
+            // Wyślij dane do serwera
+            try {
+                const response = await fetch('/projects/save', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(projectData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to save project');
+                }
+                
+                const result = await response.json();
+                
+                if (projectId) {
+                    // Aktualizacja istniejącego projektu
+                    const index = projects.findIndex(p => p.id === projectId);
+                    if (index !== -1) {
+                        projects[index] = {
+                            ...projects[index],
+                            ...projectData,
+                            date: new Date().toLocaleString('en-US')
+                        };
+                    }
+                    alert('Project updated successfully!');
+                } else {
+                    // Dodawanie nowego projektu
+                    const newProject = {
+                        id: result.projectId || Date.now().toString(36) + Math.random().toString(36).substring(2),
+                        ...projectData,
+                        date: new Date().toLocaleString('en-US')
+                    };
+                    projects.push(newProject);
+                    alert('Project added successfully!');
+                }
+                
+                // Odśwież widok i zresetuj formularz
+                const activeFilter = document.querySelector('.filter-btn.active').getAttribute('data-filter');
+                filterProjects(activeFilter);
+                
+                // Zamknij modal i zresetuj formularz
+                projectModal.style.display = 'none';
+                addProjectForm.reset();
+                
+                // Zresetuj nagłówek i tekst przycisku
+                document.querySelector('#projectModal h2').textContent = 'Add new project';
+                document.querySelector('#addProjectForm .cyber-button').textContent = 'Add project';
+                document.getElementById('projectId').value = '';
+                
+            } catch (error) {
+                console.error('Error saving project:', error);
+                alert('An error occurred while saving the project. Please try again.');
+            }
+        });
+        
+        // Załaduj projekty po załadowaniu strony
+        document.addEventListener('DOMContentLoaded', fetchProjects);
+    </script>
+</body>
+</html>

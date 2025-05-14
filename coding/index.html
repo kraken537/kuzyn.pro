@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Coding | kuzyn.pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="https://i.imgur.com/Zcv9qKn.png">
+    <link rel="stylesheet" href="/fontawesome/css/all.min.css">
+    <script src="/fontawesome/js/all.min.js"></script>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        :root {
+            --primary-color: #1e1e1e;
+            --accent-color: #00ff88;
+            --secondary-accent: #00ccff;
+            --background-color: #121212;
+            --text-color: #e0e0e0;
+            --dark-bg: #111111;
+            --code-bg: #1a1a1a;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --error-color: #f44336;
+        }
+        
+        .coding-container {
+            max-width: 100%;
+            margin: 80px auto 0;
+            padding: 0;
+            position: relative;
+            height: calc(100vh - 80px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .cyber-border {
+            position: fixed;
+            pointer-events: none;
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-color);
+            width: calc(100% - 20px);
+            height: calc(100% - 20px);
+            margin: 10px;
+            z-index: 1000;
+            animation: borderPulse 3s ease-in-out infinite;
+        }
+        
+        .toolbar {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            background: var(--primary-color);
+            border-bottom: 2px solid #333;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .editor-container {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            background: var(--primary-color);
+            border-right: 1px solid #333;
+            transition: flex 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .editor-header {
+            padding: 10px 15px;
+            background: #222;
+            color: var(--accent-color);
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+        
+        .editor-tabs {
+            display: flex;
+            background: #181818;
+            border-bottom: 1px solid #333;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #333 #222;
+        }
+        
+        .editor-tabs::-webkit-scrollbar {
+            height: 5px;
+        }
+        
+        .editor-tabs::-webkit-scrollbar-track {
+            background: #222;
+        }
+        
+        .editor-tabs::-webkit-scrollbar-thumb {
+            background-color: #333;
+            border-radius: 6px;
+        }
+        
+        .editor-tab {
+            padding: 8px 15px;
+            background: #222;
+            color: #888;
+            cursor: pointer;
+            border-right: 1px solid #333;
+            min-width: 100px;
+            text-align: center;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        
+        .editor-tab.active {
+            background: var(--code-bg);
+            color: var(--accent-color);
+        }
+        
+        .editor-tab:hover:not(.active) {
+            background: #2a2a2a;
+            color: #aaa;
+        }
+        
+        .editor-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent-color);
+            animation: glowPulse 2s infinite;
+        }
+        
+        .editor-area {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #codeEditor {
+            width: 100%;
+            height: 100%;
+            background: var(--code-bg);
+            color: var(--text-color);
+            border: none;
+            padding: 15px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+            tab-size: 4;
+        }
+        
+        .output-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--primary-color);
+            border-top: 1px solid #333;
+            max-height: 40%;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .output-header {
+            padding: 10px 15px;
+            background: #222;
+            color: var(--secondary-accent);
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .output-header .toggle-btn {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .output-header .toggle-btn.collapsed {
+            transform: rotate(180deg);
+        }
+        
+        .output-area {
+            flex: 1;
+            background: #0f0f0f;
+            color: #ddd;
+            overflow: auto;
+            padding: 10px 15px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+        
+        .output-area.html-output {
+            padding: 0;
+            background: white;
+        }
+        
+        #htmlOutput {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+        
+        .console-output {
+            padding: 10px 15px;
+        }
+        
+        .console-line {
+            margin: 2px 0;
+            padding: 2px 0;
+        }
+        
+        .console-error {
+            color: var(--error-color);
+        }
+        
+        .console-warn {
+            color: var(--warning-color);
+        }
+        
+        .console-success {
+            color: var(--success-color);
+        }
+        
+        .tasks-panel {
+            flex: 1;
+            background: var(--dark-bg);
+            border-left: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            max-width: 400px;
+            min-width: 300px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            animation: fadeInRight 0.5s ease;
+        }
+        
+        .tasks-header {
+            padding: 10px 15px;
+            background: #222;
+            color: var(--accent-color);
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+        
+        .tasks-content {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        
+        .task-card {
+            background: var(--primary-color);
+            border-radius: 5px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid #333;
+            animation: fadeIn 0.5s ease;
+            position: relative;
+        }
+        
+        .task-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-color: #444;
+        }
+        
+        .task-header {
+            padding: 10px 15px;
+            background: #222;
+            color: var(--accent-color);
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .task-content {
+            padding: 15px;
+            display: none;
+        }
+        
+        .task-card.active .task-content {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .task-action {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+            gap: 10px;
+        }
+        
+        .code-example {
+            background: #1a1a1a;
+            border-radius: 3px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            border-left: 3px solid var(--accent-color);
+        }
+        
+        .btn {
+            background: var(--accent-color);
+            color: #000;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0, 255, 136, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--secondary-accent);
+        }
+        
+        .btn-dark {
+            background: #333;
+            color: var(--text-color);
+        }
+        
+        .cyber-select {
+            background: var(--primary-color);
+            color: var(--text-color);
+            border: 2px solid var(--accent-color);
+            padding: 8px 15px;
+            border-radius: 3px;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            appearance: none;
+            position: relative;
+            cursor: pointer;
+            outline: none;
+            min-width: 150px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2300ff88' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            padding-right: 30px;
+        }
+        
+        .cyber-select:focus {
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+        
+        .status-message {
+            position: absolute;
+            right: 20px;
+            padding: 8px 15px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .status-message.success {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--success-color);
+            border-left: 3px solid var(--success-color);
+        }
+        
+        .status-message.error {
+            background: rgba(244, 67, 54, 0.2);
+            color: var(--error-color);
+            border-left: 3px solid var(--error-color);
+        }
+        
+        .toggle-panel {
+            cursor: pointer;
+            padding: 5px;
+            font-size: 1.2rem;
+            color: #888;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-panel:hover {
+            color: var(--accent-color);
+        }
+        
+        .toggle-panel.active {
+            color: var(--accent-color);
+            transform: rotate(180deg);
+        }
+        
+        .editor-options {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .line-numbers {
+            position: absolute;
+            top: 15px;
+            left: 0;
+            width: 40px;
+            height: calc(100% - 30px);
+            background: #161616;
+            color: #666;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            padding: 0 5px;
+            text-align: right;
+            overflow: hidden;
+            user-select: none;
+            border-right: 1px solid #333;
+        }
+        
+        #codeEditor.with-line-numbers {
+            padding-left: 50px;
+        }
+        
+        .snippet-library {
+            position: absolute;
+            right: 15px;
+            bottom: 15px;
+            z-index: 10;
+        }
+        
+        .snippet-menu {
+            position: absolute;
+            bottom: 40px;
+            right: 0;
+            width: 250px;
+            background: var(--primary-color);
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 10px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .snippet-menu.show {
+            display: block;
+        }
+        
+        .snippet-item {
+            padding: 8px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+            margin-bottom: 5px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .snippet-item:hover {
+            background: #333;
+        }
+        
+        .snippet-item i {
+            color: var(--accent-color);
+        }
+
+        @keyframes glowPulse {
+            0% { box-shadow: 0 0 5px var(--accent-color); }
+            50% { box-shadow: 0 0 10px var(--accent-color); }
+            100% { box-shadow: 0 0 5px var(--accent-color); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes borderPulse {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 1024px) {
+            .tasks-panel {
+                position: absolute;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                z-index: 100;
+                transform: translateX(100%);
+                box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+            }
+            
+            .tasks-panel.show {
+                transform: translateX(0);
+            }
+            
+            .editor-container {
+                flex: 1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .toolbar {
+                flex-wrap: wrap;
+            }
+            
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .editor-container, .output-container {
+                flex: none;
+                height: 50%;
+            }
+            
+            .output-container {
+                max-height: none;
+            }
+            
+            .tasks-panel {
+                width: 100%;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="/blog"><i class="fas fa-blog"></i> Blog</a></li>
+            <li><a href="/notes"><i class="fas fa-sticky-note"></i> Notes</a></li>
+            <li><a href="/coding"><i class="fas fa-code"></i> Coding</a></li>
+            <li><a href="https://cloud.kuzyn.pro" target="_blank"><i class="fas fa-network-wired"></i> Network Drive</a></li>
+            <li><a href="https://proxmox.kuzyn.pro" target="_blank"><img src="https://i.imgur.com/ZCovDE2.png" class="nav-img" alt="Proxmox"> Proxmox</a></li>
+            <li><a href="https://ha.kuzyn.pro" target="_blank"><img src="https://i.imgur.com/uYUasRE.png" class="nav-img" alt="Home Assistant"> Home Assistant</a></li>
+        </ul>
+    </nav>
+    <div class="coding-container">
+        <div class="cyber-border"></div>
+        <div class="toolbar">
+            <select id="language" class="cyber-select">
+                <option value="python">Python</option>
+                <option value="javascript">JavaScript</option>
+                <option value="html">HTML</option>
+                <option value="css">CSS</option>
+            </select>
+            
+            <button onclick="runCode()" class="btn run-btn">
+                <i class="fas fa-play"></i> Run
+            </button>
+            
+            <button onclick="saveCode()" class="btn btn-secondary save-btn">
+                <i class="fas fa-save"></i> Save
+            </button>
+            
+            <button onclick="clearCode()" class="btn btn-dark clear-btn">
+                <i class="fas fa-trash"></i> Clear
+            </button>
+            
+            <div id="status" class="status-message"></div>
+            
+            <div style="margin-left: auto;">
+                <button onclick="toggleTasksPanel()" class="btn btn-dark">
+                    <i class="fas fa-lightbulb"></i> Tips
+                </button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="editor-container">
+                <div class="editor-header">
+                    <div>
+                        <i class="fas fa-code"></i> Code Editor
+                    </div>
+                    <div class="editor-options">
+                        <button onclick="toggleLineNumbers()" class="toggle-panel" title="Show/hide line numbers">
+                            <i class="fas fa-list-ol"></i>
+                        </button>
+                        <button onclick="formatCode()" class="toggle-panel" title="Format code">
+                            <i class="fas fa-align-left"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="editor-tabs">
+                    <div class="editor-tab active" data-file="main">main.py</div>
+                    <div class="editor-tab" data-file="new" onclick="addNewTab()">+ New file</div>
+                </div>
+                
+                <div class="editor-area">
+                    <div class="line-numbers" id="lineNumbers"></div>
+                    <textarea id="codeEditor" spellcheck="false" placeholder="Type your code here..." oninput="updateLineNumbers()"></textarea>
+                    
+                    <div class="snippet-library">
+                        <button onclick="toggleSnippets()" class="btn btn-dark">
+                            <i class="fas fa-code"></i>
+                        </button>
+                        <div class="snippet-menu" id="snippetMenu">
+                            <div class="snippet-item" onclick="insertSnippet('python-function')">
+                                <i class="fab fa-python"></i> Python Function
+                            </div>
+                            <div class="snippet-item" onclick="insertSnippet('python-class')">
+                                <i class="fab fa-python"></i> Python Class
+                            </div>
+                            <div class="snippet-item" onclick="insertSnippet('js-function')">
+                                <i class="fab fa-js"></i> JavaScript Function
+                            </div>
+                            <div class="snippet-item" onclick="insertSnippet('html-template')">
+                                <i class="fab fa-html5"></i> HTML Template
+                            </div>
+                            <div class="snippet-item" onclick="insertSnippet('css-animation')">
+                                <i class="fab fa-css3"></i> CSS Animation
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="output-container">
+                <div class="output-header">
+                    <div>
+                        <i class="fas fa-terminal"></i> Console
+                    </div>
+                    <div class="toggle-btn" onclick="toggleOutput()">
+                        <i class="fas fa-chevron-up"></i>
+                    </div>
+                </div>
+                
+                <div class="output-area" id="outputArea">
+                    <div class="console-output" id="consoleOutput">
+                        <div class="console-line">Program output will appear here...</div>
+                    </div>
+                    <iframe id="htmlOutput" style="display: none;"></iframe>
+                </div>
+            </div>
+            
+            <div class="tasks-panel" id="tasksPanel">
+                <div class="tasks-header">
+                    <div>
+                        <i class="fas fa-lightbulb"></i> Tips & Tasks
+                    </div>
+                    <div class="toggle-btn" onclick="toggleTasksPanel()">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+                
+                <div class="tasks-content">
+                    <div class="task-card">
+                        <div class="task-header" onclick="toggleTask(this)">
+                            <span>Task #1: First program</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="task-content">
+                            <p>Create a simple Python program that prints "Hello, World!" and the current date.</p>
+                            
+                            <div class="code-example">
+                                <pre>import datetime
+
+print("Hello, World!")
+current_date = datetime.datetime.now()
+print(f"Today is: {current_date.strftime('%Y-%m-%d')}")</pre>
+                            </div>
+                            
+                            <div class="task-action">
+                                <button class="btn btn-dark" onclick="loadExample('python-hello')">
+                                    <i class="fas fa-copy"></i> Load example
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="task-card">
+                        <div class="task-header" onclick="toggleTask(this)">
+                            <span>Task #2: Calculator</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="task-content">
+                            <p>Create a simple calculator that performs basic mathematical operations.</p>
+                            
+                            <div class="code-example">
+                                <pre>def calculator(a, b, operation):
+    if operation == '+':
+        return a + b
+    elif operation == '-':
+        return a - b
+    elif operation == '*':
+        return a * b
+    elif operation == '/':
+        return a / b
+    else:
+        return "Unknown operation"
+
+# Example usage
+print(calculator(10, 5, '+'))</pre>
+                            </div>
+                            
+                            <div class="task-action">
+                                <button class="btn btn-dark" onclick="loadExample('python-calculator')">
+                                    <i class="fas fa-copy"></i> Load example
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="task-card">
+                        <div class="task-header" onclick="toggleTask(this)">
+                            <span>Task #3: HTML Page</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="task-content">
+                            <p>Create a simple HTML page with a title, paragraph, and image.</p>
+                            
+                            <div class="code-example">
+                                <pre>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;My Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Welcome to my page!&lt;/h1&gt;
+    &lt;p&gt;This is a simple HTML example.&lt;/p&gt;
+    &lt;img src="https://via.placeholder.com/150" alt="Placeholder"&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+                            </div>
+                            
+                            <div class="task-action">
+                                <button class="btn btn-dark" onclick="loadExample('html-basic')">
+                                    <i class="fas fa-copy"></i> Load example
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="task-card">
+                        <div class="task-header" onclick="toggleTask(this)">
+                            <span>Task #4: CSS Styling</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="task-content">
+                            <p>Add CSS styling to the previous HTML page.</p>
+                            
+                            <div class="code-example">
+                                <pre>body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+}
+
+p {
+    color: #666;
+    line-height: 1.6;
+}
+
+img {
+    display: block;
+    margin: 20px auto;
+    border: 5px solid #333;
+    border-radius: 10px;
+}</pre>
+                            </div>
+                            
+                            <div class="task-action">
+                                <button class="btn btn-dark" onclick="loadExample('css-basic')">
+                                    <i class="fas fa-copy"></i> Load example
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="task-card">
+                        <div class="task-header" onclick="toggleTask(this)">
+                            <span>Task #5: JavaScript</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="task-content">
+                            <p>Create a simple JavaScript script that displays an alert when a button is clicked.</p>
+                            
+                            <div class="code-example">
+                                <pre>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;JavaScript Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;button id="myButton"&gt;Click me!&lt;/button&gt;
+    
+    &lt;script&gt;
+        document.getElementById('myButton').addEventListener('click', function() {
+            alert('Button was clicked!');
+        });
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+                            </div>
+                            
+                            <div class="task-action">
+                                <button class="btn btn-dark" onclick="loadExample('js-button')">
+                                    <i class="fas fa-copy"></i> Load example
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/script.js"></script>
+</body>
+</html>

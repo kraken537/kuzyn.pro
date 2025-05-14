@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>kuzyn.pro | Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <link rel="stylesheet" href="/style.css">
+    <!-- Używamy CDN dla FontAwesome zamiast lokalnych plików -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        /* Better styles for blog posts */
+        .blog-container {
+            max-width: 900px;
+            margin: 100px auto 2rem;
+            padding: 0 2rem;
+        }
+        
+        .blog-post {
+            background: var(--primary-color);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.6s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .blog-post:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 0 15px rgba(0, 255, 136, 0.2);
+        }
+        
+        .blog-post h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
+            border-bottom: 1px solid #333;
+            padding-bottom: 0.5rem;
+        }
+        
+        .post-meta {
+            display: flex;
+            gap: 1rem;
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+        
+        .post-meta i {
+            color: var(--accent-color);
+        }
+        
+        .post-content {
+            line-height: 1.8;
+        }
+        
+        .post-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            display: block;
+            margin: 1.5rem auto;
+        }
+        
+        .post-content pre {
+            margin: 1.5rem 0;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        
+        .post-content code {
+            font-family: 'Courier New', monospace;
+        }
+        
+        .post-content blockquote {
+            border-left: 4px solid var(--accent-color);
+            padding-left: 1rem;
+            margin-left: 0;
+            color: #aaa;
+        }
+        
+        .no-posts {
+            text-align: center;
+            color: #888;
+            margin-top: 3rem;
+            font-style: italic;
+        }
+        
+        .loading-spinner {
+            text-align: center;
+            margin: 50px auto;
+            color: var(--accent-color);
+        }
+        
+        .loading-spinner i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Styles for add post button */
+        .blog-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--accent-color);
+            color: #000;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin: 0 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .blog-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 0 10px rgba(0, 255, 136, 0.4);
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        /* Post action buttons */
+        .post-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed #444;
+        }
+        
+        .post-action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.5rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .edit-btn {
+            background: #2a6e9c;
+            color: white;
+        }
+        
+        .edit-btn:hover {
+            background: #3a8bc2;
+        }
+        
+        .delete-btn {
+            background: #9c2a2a;
+            color: white;
+        }
+        
+        .delete-btn:hover {
+            background: #c23a3a;
+        }
+        
+        /* Delete confirmation modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: var(--primary-color);
+            border: 1px solid var(--accent-color);
+            border-radius: 10px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+            animation: modalAppear 0.3s ease-out;
+        }
+        
+        @keyframes modalAppear {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #444;
+        }
+        
+        .modal-title {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        
+        .modal-close:hover {
+            color: var(--accent-color);
+        }
+        
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        
+        .modal-btn {
+            padding: 0.7rem 1.2rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .cancel-btn {
+            background: #444;
+            color: #eee;
+            border: none;
+        }
+        
+        .cancel-btn:hover {
+            background: #555;
+        }
+        
+        .confirm-btn {
+            background: #9c2a2a;
+            color: white;
+            border: none;
+        }
+        
+        .confirm-btn:hover {
+            background: #c23a3a;
+        }
+        
+        /* Responsive fixes */
+        @media (max-width: 768px) {
+            .blog-container {
+                padding: 0 1rem;
+                margin-top: 80px;
+            }
+            
+            .blog-post {
+                padding: 1.5rem;
+            }
+            
+            .blog-post h2 {
+                font-size: 1.5rem;
+            }
+            
+            .action-buttons {
+                flex-wrap: wrap;
+            }
+            
+            .blog-button {
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cyber-border"></div>
+    <nav>
+        <ul>
+            <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="/blog"><i class="fas fa-blog"></i> Blog</a></li>
+            <li><a href="/notes"><i class="fas fa-sticky-note"></i> Notes</a></li>
+            <li><a href="/coding"><i class="fas fa-code"></i> Coding</a></li>
+            <li><a href="https://cloud.kuzyn.pro" target="_blank"><i class="fas fa-network-wired"></i> NextCloud</a></li>
+            <li><a href="https://proxmox.kuzyn.pro" target="_blank"><i class="fas fa-server"></i> Proxmox</a></li>
+            <li><a href="https://ha.kuzyn.pro" target="_blank"><i class="fas fa-home"></i> Home Assistant</a></li>
+        </ul>
+    </nav>
+
+    <main class="blog-container">
+        <div class="action-buttons" id="action-btn-container">
+            <!-- Przycisk "Add New Post" będzie wyświetlany tylko dla zalogowanych użytkowników -->
+        </div>
+        
+        <div id="blog-posts-container">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading posts...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Deletion</h3>
+                <button class="modal-close" onclick="closeDeleteModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this post? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn cancel-btn" onclick="closeDeleteModal()">Cancel</button>
+                <button id="confirmDeleteBtn" class="modal-btn confirm-btn">Delete Post</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 kuzyn.pro | Personal Website | Version 1.0</p>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-github"></i></a>
+            <a href="#"><i class="fab fa-discord"></i></a>
+            <a href="#"><i class="fas fa-envelope"></i></a>
+        </div>
+    </footer>
+
+    <!-- Główny skrypt dla strony bloga -->
+    <script src="/js/blog.js"></script>
+    <!-- Skrypt autoryzacji -->
+    <script src="/js/auth.js"></script>
+</body>
+</html>

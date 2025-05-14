@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>kuzyn.pro | Private Space</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="https://i.imgur.com/Zcv9qKn.png">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="/fontawesome/css/all.min.css">
+    <script src="/fontawesome/js/all.min.js"></script>
+
+    <!-- Twój główny plik CSS -->
+    <link rel="stylesheet" href="/style.css">
+    
+    <style>
+        /* Style dla obrazów w nawigacji */
+        .nav-img {
+            height: 18px; 
+            vertical-align: middle; 
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <ul>
+            <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="/blog"><i class="fas fa-blog"></i> Blog</a></li>
+            <li><a href="/notes"><i class="fas fa-sticky-note"></i> Notes</a></li>
+            <li><a href="/coding"><i class="fas fa-code"></i> Coding</a></li>
+            <li><a href="https://cloud.kuzyn.pro" target="_blank"><img src="/images/nextcloud.png" class="nav-img" alt="nextcloud"> NextCloud</a></li>
+            <li><a href="https://proxmox.kuzyn.pro" target="_blank"><img src="/images/proxmox.png" class="nav-img" alt="Proxmox"> Proxmox</a></li>
+            <li><a href="https://ha.kuzyn.pro" target="_blank"><img src="/images/HA.png" class="nav-img" alt="ha"> Home Assistant</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <h1>Welcome to kuzyn.pro</h1>
+        <p>My private space on the web</p>
+    </section>
+
+    <div class="grid-container">
+        <div class="card">
+            <div class="card-content">
+                <h2><i class="fas fa-blog"></i> Latest Posts</h2>
+                <p>Newest thoughts and updates</p>
+                <a href="/blog" class="btn">Read more &rarr;</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h2><i class="fas fa-code-branch"></i> Projects</h2>
+                <p>My current projects</p>
+                <a href="/projects" class="btn">View projects &rarr;</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h2><i class="fas fa-university"></i> Learning</h2>
+                <p>Educational resources and notes</p>
+                <a href="/learning" class="btn">Learn &rarr;</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 kuzyn.pro | Private Website | Version 1.1</p>
+        <div class="social-links">
+            <a href="https://github.com/kraken537"><i class="fab fa-github"></i></a>
+            <a href="https://discord.gg/CV9GSg38"><i class="fab fa-discord"></i></a>
+            <a href="#"><i class="fas fa-envelope"></i></a>
+        </div>
+    </footer>
+    <script src="/js/auth.js"></script>
+    <!-- Skrypt obsługujący np. bannery ciasteczek -->
+    <script src="/cookie-banner.js"></script>
+</body>
+</html>

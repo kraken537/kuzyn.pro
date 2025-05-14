@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Note | kuzyn.pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="https://i.imgur.com/Zcv9qKn.png">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="/fontawesome/css/all.min.css">
+    <script src="/fontawesome/js/all.min.js"></script>
+
+    <!-- Główny plik CSS -->
+    <link rel="stylesheet" href="/style.css">
+    
+    <style>
+        .note-editor-container {
+            max-width: 800px;
+            margin: 100px auto 3rem;
+            padding: 0 1.5rem;
+        }
+        
+        .note-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        
+        .note-header h1 {
+            color: var(--accent-color);
+            font-size: 2rem;
+        }
+        
+        .note-form {
+            background: var(--primary-color);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .note-form::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-color);
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 5px;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+        }
+        
+        .note-title-input {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .note-content-textarea {
+            min-height: 200px;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            resize: vertical;
+            line-height: 1.6;
+        }
+        
+        .note-length {
+            color: #777;
+            font-size: 0.9rem;
+            text-align: right;
+            margin-top: 0.5rem;
+        }
+        
+        .note-length.warning {
+            color: #ffc107;
+        }
+        
+        .note-length.danger {
+            color: #dc3545;
+        }
+        
+        .color-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.2);
+        }
+        
+        .color-option.selected {
+            border-color: #fff;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        .color-yellow { background: linear-gradient(135deg, #ffed8a, #ffc53d); }
+        .color-blue { background: linear-gradient(135deg, #a1daff, #65beff); }
+        .color-green { background: linear-gradient(135deg, #b5ffa1, #7de86a); }
+        .color-pink { background: linear-gradient(135deg, #ffc1e3, #ff9cc9); }
+        .color-orange { background: linear-gradient(135deg, #ffcf9e, #ffa54d); }
+        .color-purple { background: linear-gradient(135deg, #d5b8ff, #b387ff); }
+        
+        .note-preview {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 2px;
+            min-height: 200px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+            transform: rotate(var(--rotate, -1deg));
+            position: relative;
+            transition: all 0.3s ease;
+            opacity: 0.9;
+        }
+        
+        .note-preview-yellow {
+            background: linear-gradient(135deg, #ffed8a, #ffc53d);
+            color: #333;
+        }
+        
+        .note-preview-blue {
+            background: linear-gradient(135deg, #a1daff, #65beff);
+            color: #333;
+        }
+        
+        .note-preview-green {
+            background: linear-gradient(135deg, #b5ffa1, #7de86a);
+            color: #333;
+        }
+        
+        .note-preview-pink {
+            background: linear-gradient(135deg, #ffc1e3, #ff9cc9);
+            color: #333;
+        }
+        
+        .note-preview-orange {
+            background: linear-gradient(135deg, #ffcf9e, #ffa54d);
+            color: #333;
+        }
+        
+        .note-preview-purple {
+            background: linear-gradient(135deg, #d5b8ff, #b387ff);
+            color: #333;
+        }
+        
+        .note-preview-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .note-preview-content {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        
+        .preview-label {
+            margin-top: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .save-btn, .cancel-btn {
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+        }
+        
+        .save-btn {
+            background: var(--accent-color);
+            color: #000;
+        }
+        
+        .save-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px rgba(0, 255, 136, 0.3);
+        }
+        
+        .cancel-btn {
+            background: #333;
+            color: var(--text-color);
+        }
+        
+        .cancel-btn:hover {
+            background: #444;
+            transform: translateY(-3px);
+        }
+        
+        .status-message {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .status-success {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+        }
+        
+        .status-error {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff5555;
+            border: 1px solid #ff5555;
+        }
+        
+        .status-info {
+            background: rgba(0, 123, 255, 0.2);
+            color: #0d6efd;
+            border: 1px solid #0d6efd;
+        }
+        
+        .editor-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 1rem;
+            background: #1a1a1a;
+            padding: 0.5rem;
+            border-radius: 5px;
+        }
+        
+        .toolbar-btn {
+            background: #333;
+            border: none;
+            color: var(--text-color);
+            width: 35px;
+            height: 35px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .toolbar-btn:hover {
+            background: #444;
+            color: var(--accent-color);
+        }
+        
+        .autosave-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #777;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        .autosave-indicator i {
+            color: var(--accent-color);
+        }
+        
+        /* Media queries dla responsywności */
+        @media (max-width: 768px) {
+            .note-editor-container {
+                margin-top: 80px;
+                padding: 0 1rem;
+            }
+            
+            .note-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .note-form {
+                padding: 1.5rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .save-btn, .cancel-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cyber-border"></div>
+    
+    <nav>
+        <ul>
+            <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="/blog"><i class="fas fa-blog"></i> Blog</a></li>
+            <li><a href="/notes"><i class="fas fa-sticky-note"></i> Notes</a></li>
+            <li><a href="/coding"><i class="fas fa-code"></i> Coding</a></li>
+            <li><a href="https://cloud.kuzyn.pro" target="_blank"><i class="fas fa-network-wired"></i> Network Drive</a></li>
+        </ul>
+    </nav>
+    
+    <main class="note-editor-container">
+        <div class="note-header">
+            <h1 id="pageTitle"><i class="fas fa-plus-circle"></i> New Note</h1>
+        </div>
+        
+        <form id="noteForm" class="note-form">
+            <div class="form-group">
+                <label for="noteTitle">Title</label>
+                <input 
+                    type="text" 
+                    id="noteTitle" 
+                    class="note-title-input" 
+                    placeholder="Enter note title" 
+                    maxlength="50" 
+                    required
+                >
+                <div class="note-length" id="titleLength">0/50 characters</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="noteContent">Content</label>
+                <div class="editor-toolbar">
+                    <button type="button" class="toolbar-btn" title="Bold" onclick="formatText('**', '**')">
+                        <i class="fas fa-bold"></i>
+                    </button>
+                    <button type="button" class="toolbar-btn" title="Italic" onclick="formatText('*', '*')">
+                        <i class="fas fa-italic"></i>
+                    </button>
+                    <button type="button" class="toolbar-btn" title="Strikethrough" onclick="formatText('~~', '~~')">
+                        <i class="fas fa-strikethrough"></i>
+                    </button>
+                    <button type="button" class="toolbar-btn" title="List" onclick="insertList()">
+                        <i class="fas fa-list-ul"></i>
+                    </button>
+                    <button type="button" class="toolbar-btn" title="Important" onclick="insertImportant()">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </button>
+                </div>
+                <textarea 
+                    id="noteContent" 
+                    class="note-content-textarea" 
+                    placeholder="Enter note content"
+                    maxlength="500"
+                    required
+                ></textarea>
+                <div class="note-length" id="contentLength">0/500 characters</div>
+                <div class="autosave-indicator">
+                    <i class="fas fa-sync-alt fa-spin"></i> Autosaving
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Note color</label>
+                <div class="color-selector">
+                    <div class="color-option color-yellow selected" data-color="yellow"></div>
+                    <div class="color-option color-blue" data-color="blue"></div>
+                    <div class="color-option color-green" data-color="green"></div>
+                    <div class="color-option color-pink" data-color="pink"></div>
+                    <div class="color-option color-orange" data-color="orange"></div>
+                    <div class="color-option color-purple" data-color="purple"></div>
+                </div>
+            </div>
+            
+            <div class="preview-label">
+                <i class="fas fa-eye"></i> Note preview
+            </div>
+            
+            <div class="note-preview note-preview-yellow" id="notePreview">
+                <div class="note-preview-title" id="previewTitle">Note title</div>
+                <div class="note-preview-content" id="previewContent">Note content</div>
+            </div>
+            
+            <div class="action-buttons">
+                <button type="submit" class="save-btn">
+                    <i class="fas fa-save"></i> Save note
+                </button>
+                <a href="/notes" class="cancel-btn">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+            
+            <div class="status-message" id="statusMessage"></div>
+        </form>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 kuzyn.pro | Private Website | Version 1.0</p>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-github"></i></a>
+            <a href="#"><i class="fab fa-discord"></i></a>
+            <a href="#"><i class="fas fa-envelope"></i></a>
+        </div>
+    </footer>
+    
+    <script>
+        // Pobieranie elementów DOM
+        const noteForm = document.getElementById('noteForm');
+        const noteTitle = document.getElementById('noteTitle');
+        const noteContent = document.getElementById('noteContent');
+        const titleLength = document.getElementById('titleLength');
+        const contentLength = document.getElementById('contentLength');
+        const previewTitle = document.getElementById('previewTitle');
+        const previewContent = document.getElementById('previewContent');
+        const notePreview = document.getElementById('notePreview');
+        const colorOptions = document.querySelectorAll('.color-option');
+        const statusMessage = document.getElementById('statusMessage');
+        const pageTitle = document.getElementById('pageTitle');
+        
+        // Zmienne stanu
+        let selectedColor = 'yellow';
+        let isEditing = false;
+        let noteId = null;
+        
+        // Sprawdzanie czy edytujemy istniejącą notatkę
+        function checkForEditing() {
+            const urlParams = new URLSearchParams(window.location.search);
+            noteId = urlParams.get('id');
+            
+            if (noteId && noteId.trim() !== '') {
+                isEditing = true;
+                pageTitle.innerHTML = '<i class="fas fa-edit"></i> Edit Note';
+                fetchNoteData(noteId);
+            } else {
+                isEditing = false;
+                loadDraft();
+            }
+        }
+
+        // Pobieranie danych notatki do edycji
+        async function fetchNoteData(id) {
+            try {
+                const response = await fetch('/notes/data.json');
+                if (!response.ok) {
+                    throw new Error('Failed to retrieve note data');
+                }
+                
+                const notes = await response.json();
+                const note = notes.find(n => String(n.id) === String(id));
+                
+                if (note) {
+                    noteTitle.value = note.title;
+                    noteContent.value = note.content;
+                    
+                    // Ustaw kolor notatki, jeśli istnieje
+                    if (note.color) {
+                        selectColor(note.color);
+                    }
+                    
+                    // Aktualizuj liczniki i podgląd
+                    updateCharCount();
+                    updatePreview();
+                } else {
+                    showStatusMessage('Note with the given ID was not found', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showStatusMessage('An error occurred while loading the note', 'error');
+            }
+        }
+        
+        // Aktualizacja liczników znaków
+        function updateCharCount() {
+            const titleChars = noteTitle.value.length;
+            const contentChars = noteContent.value.length;
+            
+            titleLength.textContent = `${titleChars}/50 characters`;
+            contentLength.textContent = `${contentChars}/500 characters`;
+            
+            // Dodaj klasy ostrzeżeń dla długości
+            if (titleChars > 40) {
+                titleLength.className = 'note-length warning';
+            } else {
+                titleLength.className = 'note-length';
+            }
+            
+            if (contentChars > 400) {
+                contentLength.className = 'note-length warning';
+            } else if (contentChars > 450) {
+                contentLength.className = 'note-length danger';
+            } else {
+                contentLength.className = 'note-length';
+            }
+            
+            // Aktualizacja draftu
+            saveDraft();
+        }
+        
+        // Aktualizacja podglądu
+        function updatePreview() {
+            previewTitle.textContent = noteTitle.value || 'Note title';
+            previewContent.textContent = noteContent.value || 'Note content';
+        }
+        
+        // Wybór koloru notatki
+        function selectColor(color) {
+            selectedColor = color;
+            
+            // Usuń klasę selected ze wszystkich opcji
+            colorOptions.forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Dodaj klasę selected do wybranej opcji
+            document.querySelector(`.color-${color}`).classList.add('selected');
+            
+            // Aktualizacja podglądu
+            notePreview.className = `note-preview note-preview-${color}`;
+        }
+        
+        // Formatowanie tekstu
+        function formatText(startTag, endTag) {
+            const start = noteContent.selectionStart;
+            const end = noteContent.selectionEnd;
+            const selectedText = noteContent.value.substring(start, end);
+            
+            if (selectedText) {
+                // Jeśli jest zaznaczony tekst
+                noteContent.value = noteContent.value.substring(0, start) + 
+                                    startTag + selectedText + endTag + 
+                                    noteContent.value.substring(end);
+                noteContent.setSelectionRange(start + startTag.length, start + startTag.length + selectedText.length);
+            } else {
+                // Jeśli nie ma zaznaczonego tekstu
+                noteContent.value = noteContent.value.substring(0, start) + 
+                                    startTag + endTag + 
+                                    noteContent.value.substring(end);
+                noteContent.setSelectionRange(start + startTag.length, start + startTag.length);
+            }
+            
+            noteContent.focus();
+            updateCharCount();
+            updatePreview();
+        }
+        
+        // Wstawianie listy
+        function insertList() {
+            const start = noteContent.selectionStart;
+            const listItem = "- List item\n";
+            
+            noteContent.value = noteContent.value.substring(0, start) + 
+                                listItem + 
+                                noteContent.value.substring(start);
+            
+            noteContent.setSelectionRange(start + 2, start + 10);
+            noteContent.focus();
+            updateCharCount();
+            updatePreview();
+        }
+        
+        // Wstawianie ważnej informacji
+        function insertImportant() {
+            const start = noteContent.selectionStart;
+            const important = "!!! IMPORTANT: ";
+            
+            noteContent.value = noteContent.value.substring(0, start) + 
+                                important + 
+                                noteContent.value.substring(start);
+            
+            noteContent.setSelectionRange(start + important.length, start + important.length);
+            noteContent.focus();
+            updateCharCount();
+            updatePreview();
+        }
+        
+        // Zapis draftu
+        function saveDraft() {
+            if (!isEditing) {
+                localStorage.setItem('note_draft_title', noteTitle.value);
+                localStorage.setItem('note_draft_content', noteContent.value);
+                localStorage.setItem('note_draft_color', selectedColor);
+            }
+        }
+        
+        // Ładowanie draftu
+        function loadDraft() {
+            const draftTitle = localStorage.getItem('note_draft_title');
+            const draftContent = localStorage.getItem('note_draft_content');
+            const draftColor = localStorage.getItem('note_draft_color');
+            
+            if (draftTitle) noteTitle.value = draftTitle;
+            if (draftContent) noteContent.value = draftContent;
+            if (draftColor) selectColor(draftColor);
+            
+            updateCharCount();
+            updatePreview();
+        }
+        
+        // Czyszczenie draftu
+        function clearDraft() {
+            localStorage.removeItem('note_draft_title');
+            localStorage.removeItem('note_draft_content');
+            localStorage.removeItem('note_draft_color');
+        }
+        
+        // Wyświetlanie komunikatu statusu
+        function showStatusMessage(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message status-${type}`;
+            statusMessage.style.display = 'block';
+            
+            // Automatyczne ukrywanie po 5 sekundach
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Zapisywanie notatki
+        async function saveNote(event) {
+            event.preventDefault();
+            
+            // Wyłącz przycisk zapisu, aby zapobiec podwójnemu wysłaniu
+            const saveButton = document.querySelector('.save-btn');
+            saveButton.disabled = true;
+            saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            
+            // Pokaż wskaźnik zapisywania
+            showStatusMessage('Saving note...', 'info');
+            
+            if (!noteTitle.value.trim()) {
+                showStatusMessage('Note title is required', 'error');
+                noteTitle.focus();
+                saveButton.disabled = false;
+                saveButton.innerHTML = '<i class="fas fa-save"></i> Save note';
+                return;
+            }
+            
+            if (!noteContent.value.trim()) {
+                showStatusMessage('Note content is required', 'error');
+                noteContent.focus();
+                saveButton.disabled = false;
+                saveButton.innerHTML = '<i class="fas fa-save"></i> Save note';
+                return;
+            }
+            
+            const noteData = {
+                title: noteTitle.value.trim(),
+                content: noteContent.value.trim(),
+                color: selectedColor || 'yellow' // Zapewniamy, że kolor jest zawsze zapisany
+            };
+            
+            if (isEditing && noteId) {
+                noteData.id = noteId;
+            }
+            
+            try {
+                const response = await fetch('/notes/write', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(noteData)
+                });
+                
+                const result = await response.json().catch(e => {
+                    console.error('Error parsing JSON response:', e);
+                    return { message: 'Invalid server response' };
+                });
+                
+                if (!response.ok) {
+                    throw new Error(result.message || 'Error while saving note');
+                }
+                
+                // Wyczyść draft po pomyślnym zapisie
+                clearDraft();
+                
+                showStatusMessage('Note has been successfully saved', 'success');
+                
+                // Przekieruj do strony z notatkami po 1.5 sekundy
+                setTimeout(() => {
+                    window.location.href = '/notes';
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Error saving note:', error);
+                showStatusMessage('An error occurred while saving the note: ' + error.message, 'error');
+                saveButton.disabled = false;
+                saveButton.innerHTML = '<i class="fas fa-save"></i> Save note';
+            }
+        }
+        
+        // Event listenery
+        noteTitle.addEventListener('input', () => {
+            updateCharCount();
+            updatePreview();
+        });
+        
+        noteContent.addEventListener('input', () => {
+            updateCharCount();
+            updatePreview();
+        });
+        
+        colorOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                selectColor(option.dataset.color);
+            });
+        });
+        
+        noteForm.addEventListener('submit', saveNote);
+        
+        // Inicjalizacja po załadowaniu strony
+        document.addEventListener('DOMContentLoaded', () => {
+            checkForEditing();
+        });
+    </script>
+</body>
+</html>
