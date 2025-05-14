@@ -1,2 +1,1 @@
 # kuzyn.pro
-website structure
